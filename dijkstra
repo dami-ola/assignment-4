@@ -1,0 +1,56 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define INF 0x3f3f3f3f
+
+void printPath(vector<int> const &parent, int j)
+{
+    if (parent[j] == - 1)
+        return;
+    printPath(parent, parent[j]);
+    cout << j << " ";
+}
+
+void dijkstra(vector<vector<int>> graph, int src, int dest, int V)
+{
+    vector<int> dist(V, INF);
+    dist[src] = 0;
+    vector<bool> sptSet(V, false);
+    vector<int> parent(V);
+    parent[src] = -1;
+
+    for (int count = 0; count < V-1; count++)
+    {
+        int u = -1;
+
+        for(int i=0;i<V;i++)
+            if(!sptSet[i]&&(u==-1||dist[i]<dist[u]))
+                u=i;
+        sptSet[u] = true;
+
+        for (int v = 0; v < V; v++)
+            if (!sptSet[v] && graph[u][v] && dist[u] != INF && dist[u]+graph[u][v] < dist[v])
+            {
+                parent[v] = u;
+                dist[v] = dist[u] + graph[u][v];
+            }
+    }
+
+    cout << "Shortest path from vertex " << src << " to vertex " << dest << " is: ";
+    printPath(parent, dest);
+    cout << "\nCost of the shortest path: " << dist[dest] << "\n";
+}
+
+int main()
+{
+    int V = 5;
+    vector<vector<int>> graph = {{0, 10, INF, 3, INF},
+                                 {10, 0, 2, 4, INF},
+                                 {INF, 2, 0, 8, 9},
+                                 {3, 1, 8, 0, 2},
+                                 {INF, INF, 7, 2, 0}};
+    int src = 0; // A
+    int dest = 1; // B
+    dijkstra(graph, src, dest, V);
+    return 0;
+}
